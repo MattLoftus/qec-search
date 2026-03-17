@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import { useStore } from "./store";
 import { api } from "./api";
 import { StatsPanel } from "./components/StatsPanel";
@@ -141,6 +142,7 @@ function App() {
         )}
         {activeTab === "guide" && <Guide />}
       </main>
+      <Analytics />
     </div>
   );
 }
