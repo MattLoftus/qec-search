@@ -206,7 +206,13 @@ The known bounds for small qubit codes (q=2) are stored in `engine/known_codes.p
 - [ ] Code concatenation/product search: tensor products of best small codes
 - [ ] Weight-4 evolutionary search (evolve_polys.py --weight 4)
 
+- [x] Non-CSS stabilizer code search (symplectic.py — 7 matches vs 2 from all CSS work)
+- [x] Evolutionary non-CSS search with Clifford mutations (Hadamard, S gate, row ops, qubit perm)
+- [x] 5-cycle overnight experiment: confirmed d=4→5 gap is hard (n=13-16 stuck at d=4)
 - [ ] First code exceeding known bounds
+
+**Total matches against known bounds: 9**
+[[5,1,3]], [[6,2,2]], [[7,1,3]], [[8,2,3]], [[9,1,3]], [[10,1,4]], [[10,4,3]], [[12,2,4]], [[20,2,6]]
 
 ---
 
@@ -225,7 +231,8 @@ The known bounds for small qubit codes (q=2) are stored in `engine/known_codes.p
 - **Code concatenation/product search** — tensor products of best small codes
 
 ### Long-term
-- Non-CSS stabilizer codes (general symplectic representation)
+- Non-CSS search at n=20-30 using stim Monte Carlo distance (extend symplectic.py)
+- Structured non-CSS constructions (not random — use known algebraic families over GF(4))
 - If novel code found: document for publication, contact quantum error correction community
 
 ---
@@ -264,6 +271,11 @@ The known bounds for small qubit codes (q=2) are stored in `engine/known_codes.p
 - Being a unit is necessary but not sufficient — (4,4), (5,5) have all-unit polynomials but produce k=0 codes. The relationship between A and B matters.
 - Symmetric polynomial pairs B(x,y)=A(y,x) ensure dx=dz (equal X/Z distance)
 - Wang-Mueller codes tolerate 12-22% vanishing but compensate with more CRT components
+- Non-CSS random codes produce d=3 at 12% rate vs CSS 0% at n=8 — fundamentally richer space
+- Non-CSS evolutionary search with Clifford mutations reaches d=4 at n=13-16 but can't reach d=5
+- The d=4→5 gap at n=13-16 appears to require specific algebraic structure that evolution can't find
+- Code extension from [[5,1,3]] only preserves d=2 — adding qubits destroys distance
+- At n=10: [[10,1,4]] and [[10,4,3]] are both achievable by non-CSS random search
 
 ---
 
