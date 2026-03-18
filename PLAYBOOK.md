@@ -211,8 +211,8 @@ The known bounds for small qubit codes (q=2) are stored in `engine/known_codes.p
 - [x] 5-cycle overnight experiment: confirmed d=4→5 gap is hard (n=13-16 stuck at d=4)
 - [ ] First code exceeding known bounds
 
-**Total matches against known bounds: 9**
-[[5,1,3]], [[6,2,2]], [[7,1,3]], [[8,2,3]], [[9,1,3]], [[10,1,4]], [[10,4,3]], [[12,2,4]], [[20,2,6]]
+**Total matches against known bounds: 11**
+[[5,1,3]], [[6,2,2]], [[7,1,3]], [[8,2,3]], [[9,1,3]], [[10,1,4]], [[10,4,3]], [[12,2,4]], [[13,1,5]], [[16,8,3]], [[20,2,6]]
 
 ---
 
@@ -276,6 +276,10 @@ The known bounds for small qubit codes (q=2) are stored in `engine/known_codes.p
 - The d=4→5 gap at n=13-16 appears to require specific algebraic structure that evolution can't find
 - Code extension from [[5,1,3]] only preserves d=2 — adding qubits destroys distance
 - At n=10: [[10,1,4]] and [[10,4,3]] are both achievable by non-CSS random search
+- Quasi-twisted codes over GF(4) with twist=ω BROKE the d=4 barrier: [[13,1,5]] MATCHES!
+- QT codes access constacyclic structure that plain cyclic/bicycle codes cannot
+- The [[11,1,5]] base code is genuinely additive (not GF(4)-linear) — omega-multiples break orthogonality
+- BCH cyclic codes over GF(4) produce [[15,3,5]] (confirmed by research agent)
 
 ---
 
