@@ -211,11 +211,11 @@ The known bounds for small qubit codes (q=2) are stored in `engine/known_codes.p
 - [x] 5-cycle overnight experiment: confirmed d=4→5 gap is hard (n=13-16 stuck at d=4)
 - [x] Concatenation search (concatenation_search.py) — 4 matches via k1=1 standard concatenation; k>1 formula unreliable
 - [ ] Constacyclic codes over GF(4) (in progress)
-- [ ] Subfield subcodes GF(16)→GF(4) (in progress)
+- [x] Subfield subcodes GF(16)→GF(4) (subfield_search.py) — 9 matches via BCH codes from GF(16) roots + puncturing/shortening; 4 NEW matches: [[13,5,3]], [[14,4,4]], [[15,3,5]], [[15,7,3]]
 - [ ] First code exceeding known bounds
 
-**Total matches against known bounds: 11**
-[[5,1,3]], [[6,2,2]], [[7,1,3]], [[8,2,3]], [[9,1,3]], [[10,1,4]], [[10,4,3]], [[12,2,4]], [[13,1,5]], [[16,8,3]], [[20,2,6]]
+**Total matches against known bounds: 15**
+[[5,1,3]], [[6,2,2]], [[7,1,3]], [[8,2,3]], [[9,1,3]], [[10,1,4]], [[10,4,3]], [[12,2,4]], [[13,1,5]], [[13,5,3]], [[14,4,4]], [[15,3,5]], [[15,7,3]], [[16,8,3]], [[20,2,6]]
 
 ---
 
@@ -290,6 +290,14 @@ The known bounds for small qubit codes (q=2) are stored in `engine/known_codes.p
 - Concatenation with k_inner>1 formula is WRONG in general — produces impossible results exceeding upper bounds
 - The k>1 concatenation requires matched encoding structure, not simple block replacement
 
+- Subfield subcode construction: GF(16) Hermitian self-orthogonality (x^4) does NOT transfer to GF(4) Hermitian (x^2) — random GF(16) codes have empty GF(4) subfield subcodes
+- The WORKING approach: build BCH codes over GF(4) using GF(16) roots of unity. 4-cyclotomic cosets mod 15 determine the defining set. Check Hermitian dual-containing condition: j not in Z => -2j mod 15 in Z
+- There are exactly 26 valid HSO defining sets for length-15 BCH codes via GF(16), yielding codes with k=3 (d=5), k=7 (d=3), and k=11 (d=2)
+- Puncturing length-15 BCH codes is highly effective: [[5,1,3]], [[7,1,3]], [[6,2,2]] all found via puncturing
+- Shortening is better than puncturing for finding higher-distance codes: [[14,4,4]] and [[13,5,3]] found via shortening
+- GF(64) BCH construction at length 21/63: produces additive GF(4) codes but they fail Hermitian self-orthogonality — only maximal commuting subsets have distance 1
+- Extension (adding random columns) rarely preserves self-orthogonality — d=2 ceiling for extended codes
+
 ---
 
-*Last updated: 2026-03-15*
+*Last updated: 2026-03-18*

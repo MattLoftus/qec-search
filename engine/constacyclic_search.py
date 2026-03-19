@@ -61,7 +61,7 @@ OMEGA2 = OMEGA ** 2                 # omega^2 (element 3)
 
 # Timeouts
 DIST_TIMEOUT = 30       # per code distance computation
-PER_N_TIMEOUT = 180     # per block length
+PER_N_TIMEOUT = 120     # per block length
 
 
 # ---------------------------------------------------------------------------
@@ -255,7 +255,17 @@ def evaluate_code(H_gf4, n):
     if k < 1:
         return None
 
-    d = compute_distance_qldpc(code, timeout_sec=DIST_TIMEOUT)
+    # Skip codes with very high k -- distance computation is exponential in
+    # centralizer dimension which grows with k. For n >= 20, limit k.
+    if n >= 20 and k > 10:
+        return None
+    if n >= 15 and k > 12:
+        return None
+
+    # Adaptive timeout: shorter for larger codes
+    timeout = min(DIST_TIMEOUT, max(10, 60 - n))
+
+    d = compute_distance_qldpc(code, timeout_sec=timeout)
     if d is None or d < 2:
         return None
 
@@ -297,11 +307,36 @@ def search_single_n(n, rng=None):
             break
 
         # Factor x^n + alpha (= x^n - alpha in char 2)
+        # Use SIGALRM to timeout galois factorization for large n
         modulus = galois.Poly(GF4([1] + [0] * (n - 1) + [alpha]), field=GF4)
-        factors, mults = modulus.factors()
+
+        class FactorTimeout(Exception):
+            pass
+
+        def _alarm_handler(signum, frame):
+            raise FactorTimeout()
+
+        old_handler = signal.signal(signal.SIGALRM, _alarm_handler)
+        signal.alarm(30)  # 30s timeout for factorization
+        try:
+            factors, mults = modulus.factors()
+            signal.alarm(0)
+        except FactorTimeout:
+            signal.alarm(0)
+            signal.signal(signal.SIGALRM, old_handler)
+            print(f"  a={alpha_name}: factorization timeout (n={n})")
+            continue
+        finally:
+            signal.signal(signal.SIGALRM, old_handler)
 
         factor_degs = [f.degree for f in factors]
         print(f"  a={alpha_name}: factors={factor_degs}", end="")
+
+        # Skip if all non-trivial factors are too large (no useful combinations)
+        nontrivial_degs = [d for d in factor_degs if d > 1]
+        if nontrivial_degs and min(nontrivial_degs) > n // 2:
+            print(" -- skipping (factors too large)")
+            continue
 
         # Enumerate generator polynomials (products of factor subsets)
         total_gens = 1
@@ -432,6 +467,38 @@ def search_single_n(n, rng=None):
                         print(f"    [[{n},{k},{d}]] rand-seed{status}")
                         results.append((n, k, d, status, alpha_name,
                                         f"random seed from g=deg{deg_g}"))
+
+        # Strategy 6: For rich factorizations, try combining codewords across
+        # different generator polynomials
+        if len(generator_polys) >= 4 and time.time() - start < PER_N_TIMEOUT:
+            for _ in range(min(30, len(generator_polys))):
+                if time.time() - start > PER_N_TIMEOUT:
+                    break
+                # Pick two random generator polys
+                idx1, idx2 = rng.choice(len(generator_polys), 2, replace=False)
+                g1, _ = generator_polys[idx1]
+                g2, _ = generator_polys[idx2]
+
+                H1 = build_code_matrix(g1, n, alpha)
+                H2 = build_code_matrix(g2, n, alpha)
+                if H1 is None or H2 is None:
+                    continue
+
+                # Pick random rows from each and combine as multi-seed
+                r1 = rng.integers(0, H1.shape[0])
+                r2 = rng.integers(0, H2.shape[0])
+                seeds = [H1[r1], H2[r2]]
+                H = find_multi_seed_code(seeds, alpha, n)
+                if H is None:
+                    continue
+                result = evaluate_code(H, n)
+                if result is not None:
+                    _, k, d, status = result
+                    if k not in best_per_k or d > best_per_k[k][0]:
+                        best_per_k[k] = (d, f"a={alpha_name},cross")
+                        print(f"    [[{n},{k},{d}]] cross-gen{status}")
+                        results.append((n, k, d, status, alpha_name,
+                                        f"cross-generator"))
 
     elapsed = time.time() - start
     print(f"  n={n}: {len(results)} codes ({elapsed:.1f}s)")
