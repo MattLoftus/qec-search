@@ -280,6 +280,9 @@ The known bounds for small qubit codes (q=2) are stored in `engine/known_codes.p
 - QT codes access constacyclic structure that plain cyclic/bicycle codes cannot
 - The [[11,1,5]] base code is genuinely additive (not GF(4)-linear) — omega-multiples break orthogonality
 - BCH cyclic codes over GF(4) produce [[15,3,5]] (confirmed by research agent)
+- Graph state codes are [[n,0,d]] — dropping a row for k=1 always gives d=1 (single X becomes undetectable)
+- LC operations don't help — they redistribute X support but each stabilizer still has unique X on one qubit
+- Graph approach only works for self-dual [[n,0,d]] codes, not for k≥1 — dead end for our search
 
 ---
 
