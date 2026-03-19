@@ -209,6 +209,9 @@ The known bounds for small qubit codes (q=2) are stored in `engine/known_codes.p
 - [x] Non-CSS stabilizer code search (symplectic.py — 7 matches vs 2 from all CSS work)
 - [x] Evolutionary non-CSS search with Clifford mutations (Hadamard, S gate, row ops, qubit perm)
 - [x] 5-cycle overnight experiment: confirmed d=4→5 gap is hard (n=13-16 stuck at d=4)
+- [x] Concatenation search (concatenation_search.py) — 4 matches via k1=1 standard concatenation; k>1 formula unreliable
+- [ ] Constacyclic codes over GF(4) (in progress)
+- [ ] Subfield subcodes GF(16)→GF(4) (in progress)
 - [ ] First code exceeding known bounds
 
 **Total matches against known bounds: 11**
@@ -283,6 +286,9 @@ The known bounds for small qubit codes (q=2) are stored in `engine/known_codes.p
 - Graph state codes are [[n,0,d]] — dropping a row for k=1 always gives d=1 (single X becomes undetectable)
 - LC operations don't help — they redistribute X support but each stabilizer still has unique X on one qubit
 - Graph approach only works for self-dual [[n,0,d]] codes, not for k≥1 — dead end for our search
+- Concatenation with k_inner=1 is proven: [[n1*n2, k2, d1*d2]]. Matches [[25,1,9]], [[55,1,15]]
+- Concatenation with k_inner>1 formula is WRONG in general — produces impossible results exceeding upper bounds
+- The k>1 concatenation requires matched encoding structure, not simple block replacement
 
 ---
 
