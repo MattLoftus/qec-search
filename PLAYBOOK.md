@@ -192,7 +192,7 @@ The known bounds for small qubit codes (q=2) are stored in `engine/known_codes.p
 - [x] Tested published Bravyi/Wang-Mueller polynomials — confirmed [[54,8,6]] Wang-Mueller code
 - [x] Nightly automation (launchd at 2 AM, ntfy notifications)
 - [x] Nightly automation (launchd at 2 AM, ntfy, nice -n 15)
-- [x] Expand known bounds table (154 entries, n=5-60, corrected from codetables.de)
+- [x] Expand known bounds table (214 entries, n=5-100, corrected from codetables.de)
 - [x] Stim-based approximate distance (Monte Carlo, works for n=72-144+, verified on Bravyi codes)
 - [x] Genetic search over polynomial exponents (evolve_polys.py — weight-3 maxes at d=8)
 
@@ -210,12 +210,12 @@ The known bounds for small qubit codes (q=2) are stored in `engine/known_codes.p
 - [x] Evolutionary non-CSS search with Clifford mutations (Hadamard, S gate, row ops, qubit perm)
 - [x] 5-cycle overnight experiment: confirmed d=4→5 gap is hard (n=13-16 stuck at d=4)
 - [x] Concatenation search (concatenation_search.py) — 4 matches via k1=1 standard concatenation; k>1 formula unreliable
-- [ ] Constacyclic codes over GF(4) (in progress)
+- [x] Constacyclic codes over GF(4) (constacyclic_search.py) — 5 matches: [[5,1,3]], [[7,1,3]], [[13,1,5]], [[17,1,7]], [[17,9,4]]; also found [[21,3,6]], [[21,9,4]]
 - [x] Subfield subcodes GF(16)→GF(4) (subfield_search.py) — 9 matches via BCH codes from GF(16) roots + puncturing/shortening; 4 NEW matches: [[13,5,3]], [[14,4,4]], [[15,3,5]], [[15,7,3]]
 - [ ] First code exceeding known bounds
 
-**Total matches against known bounds: 15**
-[[5,1,3]], [[6,2,2]], [[7,1,3]], [[8,2,3]], [[9,1,3]], [[10,1,4]], [[10,4,3]], [[12,2,4]], [[13,1,5]], [[13,5,3]], [[14,4,4]], [[15,3,5]], [[15,7,3]], [[16,8,3]], [[20,2,6]]
+**Total matches against known bounds: 17**
+[[5,1,3]], [[6,2,2]], [[7,1,3]], [[8,2,3]], [[9,1,3]], [[10,1,4]], [[10,4,3]], [[12,2,4]], [[13,1,5]], [[13,5,3]], [[14,4,4]], [[15,3,5]], [[15,7,3]], [[16,8,3]], [[17,1,7]], [[17,9,4]], [[20,2,6]]
 
 ---
 
@@ -297,7 +297,13 @@ The known bounds for small qubit codes (q=2) are stored in `engine/known_codes.p
 - Shortening is better than puncturing for finding higher-distance codes: [[14,4,4]] and [[13,5,3]] found via shortening
 - GF(64) BCH construction at length 21/63: produces additive GF(4) codes but they fail Hermitian self-orthogonality — only maximal commuting subsets have distance 1
 - Extension (adding random columns) rarely preserves self-orthogonality — d=2 ceiling for extended codes
+- Constacyclic codes over GF(4): factor x^n-alpha (alpha=omega,omega^2) over GF(4), build codes from generator polynomials, use constacyclic SHIFT structure to generate stabilizers
+- The shift-based construction is key: a self-orthogonal seed vector + its constacyclic shifts give a structured stabilizer set
+- Rich factorizations (many small-degree factors) produce better codes: n=17 has 5 degree-4 factors → [[17,1,7]] and [[17,9,4]] matches; n=21 has 7 degree-3 factors → [[21,3,6]]
+- Poor factorizations (e.g., n=19 with factors [1,9,9], n=23 with [1,11,11]) yield nothing — too few factor combinations
+- Galois library factorization is slow for large extensions (n=23: ord_4(23)=11 means GF(4^11)); needs SIGALRM timeout
+- The [[13,1,5]] match confirms connection to quasi-twisted codes: omega-constacyclic is the algebraic foundation of the QT twist=omega construction
 
 ---
 
-*Last updated: 2026-03-18*
+*Last updated: 2026-03-20*
